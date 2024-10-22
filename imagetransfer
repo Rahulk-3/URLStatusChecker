@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+
+# Dictionary of GCP projects and their GCR repositories
+# Modify these according to your needs
+GCP_PROJECTS = {
+    1: "project-a-123",
+    2: "project-b-456",
+    3: "project-c-789"
+}
+
+# Dictionary of repositories for each project
+# Modify these according to your needs
+GCR_REPOS = {
+    1: "frontend",
+    2: "backend",
+    3: "middleware",
+    4: "utils"
+}
+
+def print_projects():
+    print("\nAvailable Projects:")
+    for key, project in GCP_PROJECTS.items():
+        print(f"{key}. {project}")
+
+def print_repos():
+    print("\nAvailable Repositories:")
+    for key, repo in GCR_REPOS.items():
+        print(f"{key}. {repo}")
+
+def generate_commands():
+    print_projects()
+    source_project_num = int(input("\nEnter source project number: "))
+    target_project_num = int(input("Enter target project number: "))
+    
+    print_repos()
+    source_repo_num = int(input("\nEnter source repository number: "))
+    target_repo_num = int(input("Enter target repository number: "))
+    
+    image_tag = input("\nEnter image tag: ")
+    
+    # Get the selected values
+    source_project = GCP_PROJECTS[source_project_num]
+    target_project = GCP_PROJECTS[target_project_num]
+    source_repo = GCR_REPOS[source_repo_num]
+    target_repo = GCR_REPOS[target_repo_num]
+    
+    # Generate the GCR URLs
+    source_url = f"gcr.io/{source_project}/{source_repo}:{image_tag}"
+    target_url = f"gcr.io/{target_project}/{target_repo}:{image_tag}"
+    
+    # Print the commands
+    print("\nCommands to transfer image:")
+    print("-" * 50)
+    print(f"docker pull {source_url}")
+    print(f"docker tag {source_url} {target_url}")
+    print(f"docker push {target_url}")
+    print("-" * 50)
+
+def main():
+    while True:
+        try:
+            generate_commands()
+            
+            again = input("\nGenerate more commands? (y/n): ")
+            if again.lower() != 'y':
+                break
+                
+        except KeyError:
+            print("\nError: Invalid selection. Please choose from the available options.")
+        except ValueError:
+            print("\nError: Please enter valid numbers.")
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            break
+
+if __name__ == "__main__":
+    main()
